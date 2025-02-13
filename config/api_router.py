@@ -8,7 +8,7 @@ router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
 router.register("users", UserViewSet)
 router.register("customers", CustomerViewSet)
-router.register("seller", SellerViewSet)
+router.register("sellers", SellerViewSet)
 
 app_name = "api"
 urlpatterns = router.urls

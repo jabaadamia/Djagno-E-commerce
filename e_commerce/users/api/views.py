@@ -1,17 +1,28 @@
 from rest_framework import status  # noqa: I001
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin
+from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
+from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework.permissions import IsAuthenticated
 
 from e_commerce.users.models import User, Customer, Seller
 
 from .serializers import UserSerializer, CustomerSerializer, SellerSerializer
 
 
-class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
+class UserViewSet(
+    RetrieveModelMixin,
+    ListModelMixin,
+    UpdateModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
+    permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
@@ -30,15 +41,19 @@ class CustomerViewSet(
     RetrieveModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
     GenericViewSet,
 ):
+    permission_classes = [IsAuthenticated]
     serializer_class = CustomerSerializer
     queryset = Customer.objects.all()
+    lookup_field = "user__username"
 
     def get_queryset(self):
         # Only return the customer profile of the authenticated user
         assert isinstance(self.request.user.id, int)
-        return self.queryset.filter(user=self.request.user)
+        return self.queryset
 
     @action(detail=False, methods=["get"])
     def me(self, request):
@@ -55,18 +70,28 @@ class CustomerViewSet(
         serializer = CustomerSerializer(customer, context={"request": request})
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        customer = self.get_object()
+        customer.user.delete()  # delete associated user
+        customer.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class SellerViewSet(
     RetrieveModelMixin,
     ListModelMixin,
     UpdateModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
     GenericViewSet,
 ):
+    permission_classes = [IsAuthenticated]
     serializer_class = SellerSerializer
     queryset = Seller.objects.all()
+    lookup_field = "user__username"
 
     def get_queryset(self):
-        # Only return the customer profile of the authenticated user
+        # Only return the seller profile of the authenticated user
         assert isinstance(self.request.user.id, int)
         return self.queryset.filter(user=self.request.user)
 
@@ -84,3 +109,9 @@ class SellerViewSet(
             )
         serializer = SellerSerializer(seller, context={"request": request})
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        seller = self.get_object()
+        seller.user.delete()  # delete associated user
+        seller.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
