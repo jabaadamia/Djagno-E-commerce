@@ -8,10 +8,16 @@ from rest_framework.mixins import DestroyModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied, NotFound
 
-from e_commerce.users.models import User, Customer, Seller
+from e_commerce.users.models import User, Customer, Seller, Address
 
-from .serializers import UserSerializer, CustomerSerializer, SellerSerializer
+from .serializers import (
+    UserSerializer,
+    CustomerSerializer,
+    SellerSerializer,
+    AddressSerializer,
+)
 
 
 class UserViewSet(
@@ -53,7 +59,7 @@ class CustomerViewSet(
     def get_queryset(self):
         # Only return the customer profile of the authenticated user
         assert isinstance(self.request.user.id, int)
-        return self.queryset
+        return self.queryset.filter(user=self.request.user)
 
     @action(detail=False, methods=["get"])
     def me(self, request):
@@ -115,3 +121,32 @@ class SellerViewSet(
         seller.user.delete()  # delete associated user
         seller.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class AddressViewSet(
+    RetrieveModelMixin,
+    ListModelMixin,
+    UpdateModelMixin,
+    CreateModelMixin,
+    DestroyModelMixin,
+    GenericViewSet,
+):
+    permission_classes = [IsAuthenticated]
+    serializer_class = AddressSerializer
+    queryset = Address.objects.all()
+
+    def get_queryset(self):
+        assert isinstance(self.request.user.id, int)
+        username = self.kwargs.get("nested_1_user__username")
+
+        is_seller = Seller.objects.filter(user__username=username).exists()
+        is_customer = Customer.objects.filter(user__username=username).exists()
+
+        if "sellers" in self.request.path and not is_seller:
+            raise NotFound(f"no such seller {username}")  # noqa: EM102, TRY003
+        if "customers" in self.request.path and not is_customer:
+            raise NotFound(f"no such customer {username}")  # noqa: EM102, TRY003
+
+        if self.request.user.username != username:
+            raise PermissionDenied("You are not allowed to access other's addresses.")  # noqa: EM101, TRY003
+        return self.queryset.filter(user=self.request.user)

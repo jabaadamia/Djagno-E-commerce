@@ -69,8 +69,13 @@ class SellerSerializer(serializers.ModelSerializer[Seller]):
 class AddressSerializer(serializers.ModelSerializer[Address]):
     class Meta:
         model = Address
-        fields = ["id", "user", "street", "city", "state", "country", "postal_code"]
+        fields = ["id", "street", "city", "state", "country", "postal_code"]
 
         extra_kwargs = {
             "url": {"view_name": "api:address-detail", "lookup_field": "id"},
         }
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        validated_data["user"] = request.user  # Assign logged-in user
+        return super().create(validated_data)

@@ -305,7 +305,9 @@ SPECTACULAR_SETTINGS = {
     "TITLE": "Django E-commerce API",
     "DESCRIPTION": "Documentation of API endpoints of Django E-commerce",
     "VERSION": "1.0.0",
-    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "SERVE_PERMISSIONS": [
+        "rest_framework.permissions.AllowAny",
+    ],  # change to IsAdminUser
     "SCHEMA_PATH_PREFIX": "/api/",
 }
 # Your stuff...
