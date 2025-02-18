@@ -11,6 +11,10 @@ class ProductImageSerializer(serializers.ModelSerializer):
             "image": {"required": True},
         }
 
+    def create(self, validated_data):
+        product = validated_data.get("product")
+        return ProductImage.objects.create(product=product, **validated_data)
+
 
 class ProductSerializer(serializers.ModelSerializer):
     categories = serializers.SlugRelatedField(
@@ -46,6 +50,18 @@ class ProductSerializer(serializers.ModelSerializer):
                 "lookup_field": "id",
             },
         }
+
+    def create(self, validated_data):
+        images_data = validated_data.pop("images", [])
+
+        # Create the product instance without images first
+        product = Product.objects.create(**validated_data)
+
+        # Create and associate images with the product
+        for image_data in images_data:
+            ProductImage.objects.create(product=product, **image_data)
+
+        return product
 
 
 class CategorySerializer(serializers.ModelSerializer):
