@@ -21,15 +21,15 @@ class ProductSerializer(serializers.ModelSerializer):
         many=True,
         queryset=Category.objects.all(),
         slug_field="name",
+        required=False,
     )
 
-    seller = serializers.HyperlinkedRelatedField(
-        view_name="api:seller-detail",
-        lookup_field="username",
-        read_only=True,
-    )
+    seller = serializers.SerializerMethodField()
 
-    images = ProductImageSerializer(many=True, read_only=True)
+    def get_seller(self, obj):
+        return obj.seller.user.username
+
+    images = ProductImageSerializer(many=True, required=False)
 
     class Meta:
         model = Product
@@ -52,14 +52,23 @@ class ProductSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        images_data = validated_data.pop("images", [])
+        seller = self.context.get("seller")
+        images_data = self.context["request"].data.getlist("images", [])
+        categories = validated_data.pop("categories", [])
+
+        if len(images_data) < 1:
+            raise serializers.ValidationError("At least one image is required.")  # noqa: EM101, TRY003
+        if len(images_data) > 6:  # noqa: PLR2004
+            raise serializers.ValidationError("A maximum of 6 images is allowed.")  # noqa: EM101, TRY003
 
         # Create the product instance without images first
-        product = Product.objects.create(**validated_data)
+        product = Product.objects.create(seller=seller, **validated_data)
+
+        product.categories.set(categories)
 
         # Create and associate images with the product
         for image_data in images_data:
-            ProductImage.objects.create(product=product, **image_data)
+            ProductImage.objects.create(product=product, image=image_data)
 
         return product
 
