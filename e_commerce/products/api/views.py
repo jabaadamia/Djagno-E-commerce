@@ -1,4 +1,5 @@
 from rest_framework import status  # noqa: I001
+from rest_framework.decorators import action
 from rest_framework.mixins import (
     ListModelMixin,
     CreateModelMixin,
@@ -46,6 +47,21 @@ class ProductViewSet(
 
         # For POST, PUT, DELETE, apply IsSeller
         return [IsSeller()]
+
+    @action(detail=False, methods=["get"], permission_classes=[IsSeller])
+    def my_products(self, request):
+        """
+        Custom action to get the current sellers's products.
+        """
+
+        products = Product.objects.filter(seller=request.user.seller)
+
+        serializer = ProductSerializer(
+            products,
+            many=True,
+            context={"request": request},
+        )
+        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         """Override create method to assign seller based on the authenticated user"""
