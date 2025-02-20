@@ -21,3 +21,4 @@ djangorestframework-simplejwt==5.4.0 #https://github.com/jazzband/djangorestfram
 drf-nested-routers==0.94.1 #https://github.com/alanjds/drf-nested-routers
 # DRF-spectacular for api documentation
 drf-spectacular==0.28.0  # https://github.com/tfranzel/drf-spectacular
+django-filter==25.1

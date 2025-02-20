@@ -15,6 +15,7 @@ from rest_framework.permissions import (
     IsAdminUser,
 )
 from rest_framework.exceptions import PermissionDenied
+import django_filters
 
 from e_commerce.products.models import Product, Category
 
@@ -24,6 +25,24 @@ from .serializers import ProductSerializer, CategorySerializer
 class IsSeller(BasePermission):
     def has_permission(self, request, view):
         return hasattr(request.user, "seller")
+
+
+class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
+    pass
+
+
+class ProductFilter(django_filters.FilterSet):
+    name = django_filters.CharFilter(field_name="name", lookup_expr="icontains")
+    min_price = django_filters.NumberFilter(field_name="price", lookup_expr="gte")
+    max_price = django_filters.NumberFilter(field_name="price", lookup_expr="lte")
+    categories = CharInFilter(field_name="categories__name", lookup_expr="in")
+    ordering = django_filters.OrderingFilter(
+        fields=("price", "created_at"),
+        field_labels={
+            "price": "Price",
+            "created_at": "Date Created",
+        },
+    )
 
 
 class ProductViewSet(
@@ -37,6 +56,8 @@ class ProductViewSet(
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
     lookup_field = "id"
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_class = ProductFilter
 
     def get_permissions(self):
         """
@@ -55,6 +76,19 @@ class ProductViewSet(
         """
 
         products = Product.objects.filter(seller=request.user.seller)
+
+        # Apply filtering
+        filtered_products = self.filter_queryset(products)
+
+        # Apply pagination
+        page = self.paginate_queryset(filtered_products)
+        if page is not None:
+            serializer = ProductSerializer(
+                page,
+                many=True,
+                context={"request": request},
+            )
+            return self.get_paginated_response(serializer.data)
 
         serializer = ProductSerializer(
             products,
