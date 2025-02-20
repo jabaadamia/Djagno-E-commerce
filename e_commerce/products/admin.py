@@ -18,7 +18,7 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     """Admin panel for products."""
 
-    list_display = ["id", "name", "price", "seller", "created_at"]
+    list_display = ["id", "name", "price", "seller", "created_at", "available_quantity"]
     search_fields = ["name", "seller__user__username"]
     ordering = ["id"]
     list_filter = ["categories"]

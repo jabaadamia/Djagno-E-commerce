@@ -2,6 +2,7 @@ from django.db.models import (  # noqa: I001
     Model,
     CharField,
     DecimalField,
+    PositiveIntegerField,
     TextField,
     DateTimeField,
     ImageField,
@@ -27,6 +28,7 @@ class Product(Model):
     description = TextField()
     price = DecimalField(max_digits=10, decimal_places=2)
     created_at = DateTimeField(auto_now_add=True)
+    available_quantity = PositiveIntegerField(default=1)
     seller = ForeignKey(Seller, on_delete=CASCADE, related_name="products")
     categories = ManyToManyField(Category, related_name="products")
 
