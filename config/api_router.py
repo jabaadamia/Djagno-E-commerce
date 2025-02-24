@@ -15,11 +15,13 @@ from e_commerce.products.api.views import (
     CategoryViewSet,
 )  # , ProductImageViewSet
 
+from e_commerce.cart.api.views import CartViewSet
+
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
 router.register("users", UserViewSet)
-router.register("customers", CustomerViewSet)
-router.register("sellers", SellerViewSet)
+router.register("customers", CustomerViewSet, basename="customer")
+router.register("sellers", SellerViewSet, basename="seller")
 
 nested_router_class = NestedDefaultRouter if settings.DEBUG else NestedSimpleRouter
 
@@ -33,6 +35,8 @@ seller_router.register("addresses", AddressViewSet, basename="seller-addresses")
 router.register("products", ProductViewSet)
 
 router.register("categories", CategoryViewSet)
+
+router.register("cart", CartViewSet)
 
 app_name = "api"
 urlpatterns = router.urls + customer_router.urls + seller_router.urls
