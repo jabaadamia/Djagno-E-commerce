@@ -2,7 +2,7 @@ from rest_framework import status  # noqa: I001
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import action
 
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import BasePermission
 
@@ -16,58 +16,53 @@ class IsCustomer(BasePermission):
         return hasattr(request.user, "customer")
 
 
-class CartViewSet(ModelViewSet):
-    model = Cart
+class CartViewSet(GenericViewSet):
     serializer_class = CartSerializer
-    queryset = Cart.objects.all()
-    lookup_field = "id"
     permission_classes = [IsCustomer]
+    queryset = Cart.objects.all()
 
-    def create(self, request, *args, **kwargs):
+    def get_queryset(self):
+        """Ensure users only see their own cart"""
+        if not hasattr(self.request.user, "customer"):
+            return Cart.objects.none()
+        return Cart.objects.filter(customer=self.request.user.customer)
+
+    def list(self, request, *args, **kwargs):
+        """
+        Retrieve the authenticated user's cart.
+        """
+        cart = get_object_or_404(Cart, customer=request.user.customer)
+        serializer = self.get_serializer(cart)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["post"], permission_classes=[IsCustomer])
+    def add_to_cart(self, request):
+        """
+        Add a product to the cart.
+        """
         customer = request.user.customer
         product_id = request.data.get("product_id")
         quantity = request.data.get("quantity", 1)
 
         product = get_object_or_404(Product, id=product_id)
-
-        # Get or create a cart for the user
         cart, _ = Cart.objects.get_or_create(customer=customer)
 
-        # Add the product to the cart
-        cart_item, item_created = CartItem.objects.get_or_create(
+        cart_item, created = CartItem.objects.get_or_create(
             cart=cart,
             product=product,
             defaults={"quantity": quantity},
         )
 
-        if not item_created:
+        if not created:
             cart_item.quantity += quantity
             cart_item.save()
 
         return Response({"detail": "Product added to cart"}, status=status.HTTP_200_OK)
 
-    def get_queryset(self):
-        if not hasattr(self.request.user, "customer"):
-            return Cart.objects.none()
-        return Cart.objects.filter(customer=self.request.user.customer)
-
-    def retrieve(self, request, *args, **kwargs):
-        if not hasattr(request.user, "customer"):
-            return Response(
-                {"detail": "Only customers can have carts."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
-        customer = request.user.customer
-        cart, created = Cart.objects.get_or_create(user=customer)
-
-        serializer = self.get_serializer(cart)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=["patch"], permission_classes=[IsCustomer])
-    def update_quantity(self, request, id=None):  # noqa: A002
+    @action(detail=False, methods=["patch"], permission_classes=[IsCustomer])
+    def update_quantity(self, request):
         """
-        Update quantity of a cart item
+        Update the quantity of a cart item.
         """
         cart = get_object_or_404(Cart, customer=request.user.customer)
         product_id = request.data.get("product_id")
@@ -98,10 +93,10 @@ class CartViewSet(ModelViewSet):
         cart_item.save()
         return Response({"detail": "Quantity updated."}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["delete"], permission_classes=[IsCustomer])
-    def remove_item(self, request, id=None):  # noqa: A002
+    @action(detail=False, methods=["delete"], permission_classes=[IsCustomer])
+    def remove_item(self, request):
         """
-        Remove a product from the cart
+        Remove a product from the cart.
         """
         cart = get_object_or_404(Cart, customer=request.user.customer)
         product_id = request.data.get("product_id")

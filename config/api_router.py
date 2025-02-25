@@ -36,7 +36,7 @@ router.register("products", ProductViewSet)
 
 router.register("categories", CategoryViewSet)
 
-router.register("cart", CartViewSet)
+router.register("cart", CartViewSet, basename="cart")
 
 app_name = "api"
 urlpatterns = router.urls + customer_router.urls + seller_router.urls
