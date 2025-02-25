@@ -120,3 +120,6 @@ class CartViewSet(GenericViewSet):
             {"detail": "Item removed from cart."},
             status=status.HTTP_200_OK,
         )
+
+    def _calculate_total_price(self, cart):
+        return sum(item.product.price * item.quantity for item in cart.items.all())
