@@ -26,8 +26,11 @@ class UserSerializer(serializers.ModelSerializer[User]):
         are replaced with the default profile_picture value.
         """
 
-        if attrs.get("profile_picture") is None:
-            attrs["profile_picture"] = "profile_pictures/default.jpg"
+        if "profile_picture" in attrs and attrs["profile_picture"] is None:
+            if (
+                not self.instance.profile_picture
+            ):  # Don't overwrite if there's already a picture
+                attrs["profile_picture"] = "profile_pictures/default.jpg"
 
         return attrs
 
