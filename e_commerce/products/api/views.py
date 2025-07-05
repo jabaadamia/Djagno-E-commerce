@@ -13,6 +13,7 @@ from rest_framework.permissions import (
     BasePermission,
     AllowAny,
     IsAdminUser,
+    IsAuthenticated,
 )
 from rest_framework.exceptions import PermissionDenied
 import django_filters
@@ -151,7 +152,13 @@ class CategoryViewSet(
     UpdateModelMixin,
     GenericViewSet,
 ):
-    permission_classes = [IsAdminUser]
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = "id"
+
+    def get_permissions(self):
+        if self.request.method in ["GET", "HEAD", "OPTIONS"]:
+            permission_classes = [IsAuthenticated]
+        else:
+            permission_classes = [IsAdminUser]
+        return [permission() for permission in permission_classes]
