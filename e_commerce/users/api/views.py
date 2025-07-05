@@ -51,10 +51,14 @@ class CustomerViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
-    permission_classes = [IsAuthenticated]
     serializer_class = CustomerSerializer
     queryset = Customer.objects.all()
     lookup_field = "user__username"
+
+    def get_permissions(self):
+        if self.action == "create":
+            return []
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         # Only return the customer profile of the authenticated user
@@ -91,10 +95,14 @@ class SellerViewSet(
     DestroyModelMixin,
     GenericViewSet,
 ):
-    permission_classes = [IsAuthenticated]
     serializer_class = SellerSerializer
     queryset = Seller.objects.all()
     lookup_field = "user__username"
+
+    def get_permissions(self):
+        if self.action == "create":
+            return []
+        return [IsAuthenticated()]
 
     def get_queryset(self):
         # Only return the seller profile of the authenticated user
