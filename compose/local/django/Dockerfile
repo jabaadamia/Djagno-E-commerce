@@ -44,6 +44,7 @@ RUN groupadd --gid 1000 dev-user \
   && echo dev-user ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/dev-user \
   && chmod 0440 /etc/sudoers.d/dev-user
 
+RUN apt-get update && apt-get install -y postgresql-client
 
 # Install required system dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
