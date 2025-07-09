@@ -274,4 +274,3 @@ e_commerce/media/
 .ipython/
 .env
 .envs/*
-.envs/.local/
