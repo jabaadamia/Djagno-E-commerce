@@ -16,6 +16,7 @@ from e_commerce.products.api.views import (
 )  # , ProductImageViewSet
 
 from e_commerce.cart.api.views import CartViewSet
+from e_commerce.orders.api.order_viewset import OrderViewSet
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
@@ -37,6 +38,8 @@ router.register("products", ProductViewSet)
 router.register("categories", CategoryViewSet)
 
 router.register("cart", CartViewSet, basename="cart")
+
+router.register("orders", OrderViewSet, basename="order")
 
 app_name = "api"
 urlpatterns = router.urls + customer_router.urls + seller_router.urls

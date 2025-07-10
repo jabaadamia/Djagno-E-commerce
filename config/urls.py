@@ -10,6 +10,8 @@ from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+from e_commerce.orders.api.views import StripeWebhookView
+
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
     path(
@@ -35,6 +37,10 @@ urlpatterns += [
     # DRF JWT Generation and Refresh
     path("api/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("api/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    # payments
+    path("api/payments/", include("orders.api.urls")),
+    # Stripe webhook
+    path("api/stripe/webhook/", StripeWebhookView.as_view(), name="stripe-webhook"),
     path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
     path(
         "api/docs/",
