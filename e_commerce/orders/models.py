@@ -78,7 +78,7 @@ class Order(Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"Order {self.order_number} - {self.customer.username}"
+        return f"Order {self.order_number} - {self.customer.user.username}"
 
     def save(self, *args, **kwargs):
         if not self.order_number:
