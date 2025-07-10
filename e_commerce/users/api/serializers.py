@@ -57,7 +57,7 @@ class SellerSerializer(serializers.ModelSerializer[Seller]):
 
     class Meta:
         model = Seller
-        fields = ["user", "shop_name", "shop_description"]
+        fields = ["user", "shop_name", "shop_description", "stripe_account_id"]
 
         extra_kwargs = {
             "url": {"view_name": "api:seller-detail", "lookup_field": "username"},

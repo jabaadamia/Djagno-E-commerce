@@ -65,6 +65,7 @@ class Seller(Model):
     user = OneToOneField(User, on_delete=CASCADE, related_name="seller")
     shop_name = CharField(_("Shop Name"), max_length=255, blank=True)
     shop_description = TextField(_("Shop Description"), blank=True)
+    stripe_account_id = CharField(max_length=100, blank=True, null=True)  # noqa: DJ001
 
     def __str__(self):
         return f"Seller: {self.user.username}"
