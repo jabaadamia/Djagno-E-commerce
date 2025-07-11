@@ -13,6 +13,7 @@ from rest_framework.exceptions import PermissionDenied, NotFound
 from django.db import models
 
 from e_commerce.users.models import User, Customer, Seller, Address
+from e_commerce.orders.models import OrderItem
 from e_commerce.orders.api.serializers import OrderItemSerializer
 
 from .serializers import (
@@ -225,6 +226,44 @@ class SellerViewSet(
             {"product_id": product_id, "total_earnings": str(total_earnings)},
             status=status.HTTP_200_OK,
         )
+
+    @action(
+        detail=False,
+        methods=["patch"],
+        url_path="order-items/update-status",
+        permission_classes=[IsAuthenticated],
+    )
+    def update_order_item_status(self, request, pk=None):
+        """
+        Endpoint for sellers to update the status of an order item they own.
+        """
+        try:
+            seller = self.get_queryset().get(user=request.user)
+        except Seller.DoesNotExist:
+            return Response(
+                {"detail": "Seller profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        try:
+            pk = request.query_params.get("order_item_id")
+            order_item = OrderItem.objects.get(id=pk, seller=seller)
+        except OrderItem.DoesNotExist:
+            return Response(
+                {"detail": "Order item not found or does not belong to you."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        new_status = request.data.get("seller_status")
+        if not new_status:
+            return Response(
+                {"detail": "Missing 'seller_status' in request data."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        order_item.seller_status = new_status
+        order_item.save()
+
+        serializer = OrderItemSerializer(order_item, context={"request": request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AddressViewSet(
