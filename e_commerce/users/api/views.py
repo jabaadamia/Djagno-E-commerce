@@ -10,7 +10,10 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied, NotFound
 
+from django.db import models
+
 from e_commerce.users.models import User, Customer, Seller, Address
+from e_commerce.orders.api.serializers import OrderItemSerializer
 
 from .serializers import (
     UserSerializer,
@@ -116,9 +119,9 @@ class SellerViewSet(
         """
         try:
             seller = self.get_queryset().get(user=request.user)
-        except Customer.DoesNotExist:
+        except Seller.DoesNotExist:
             return Response(
-                {"detail": "Customer profile not found."},
+                {"detail": "Seller profile not found."},
                 status=status.HTTP_404_NOT_FOUND,
             )
         serializer = SellerSerializer(seller, context={"request": request})
@@ -129,6 +132,99 @@ class SellerViewSet(
         seller.user.delete()  # delete associated user
         seller.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="orders",
+        permission_classes=[IsAuthenticated],
+    )
+    def orders(self, request):
+        """
+        Endpoint to get all orders (OrderItems) for the seller.
+        """
+        try:
+            seller = self.get_queryset().get(user=request.user)
+        except Seller.DoesNotExist:
+            return Response(
+                {"detail": "Seller profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        orders = seller.order_items.all()
+        serializer = OrderItemSerializer(
+            orders,
+            many=True,
+            context={
+                "request": request,
+            },
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="total-earnings",
+        permission_classes=[IsAuthenticated],
+    )
+    def total_earnings(self, request):
+        """
+        Endpoint to get the total earnings for the seller.
+        """
+        try:
+            seller = self.get_queryset().get(user=request.user)
+        except Seller.DoesNotExist:
+            return Response(
+                {"detail": "Seller profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        total_earnings = (
+            seller.payouts.aggregate(
+                total_earnings=models.Sum("amount"),
+            )["total_earnings"]
+            or 0
+        )
+        return Response(
+            {"total_earnings": str(total_earnings)},
+            status=status.HTTP_200_OK,
+        )
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="product-earnings",
+        permission_classes=[IsAuthenticated],
+    )
+    def product_earnings(self, request, *args, **kwargs):
+        """
+        Endpoint to get the total earnings for a specific product.
+        """
+        try:
+            seller = self.get_queryset().get(user=request.user)
+        except Seller.DoesNotExist:
+            return Response(
+                {"detail": "Seller profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        product_id = request.query_params.get("product_id")
+
+        if not product_id:
+            return Response(
+                {"detail": "Missing product_id parameter."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        total_earnings = (
+            seller.order_items.filter(product__id=product_id).aggregate(
+                total=models.Sum("seller_payout_amount"),
+            )["total"]
+            or 0
+        )
+
+        return Response(
+            {"product_id": product_id, "total_earnings": str(total_earnings)},
+            status=status.HTTP_200_OK,
+        )
 
 
 class AddressViewSet(

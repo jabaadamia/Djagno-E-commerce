@@ -3,12 +3,14 @@ from rest_framework import serializers
 from e_commerce.orders.models import Order
 from e_commerce.orders.models import OrderItem
 from e_commerce.orders.models import Payment
+from e_commerce.users.api.serializers import AddressSerializer
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
     total_price = serializers.SerializerMethodField(read_only=True)
     product_name = serializers.CharField(source="product.name", read_only=True)
     seller_name = serializers.CharField(source="seller.user.username", read_only=True)
+    shipping_address = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = OrderItem
@@ -26,6 +28,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "seller_payout_amount",
             "created_at",
             "updated_at",
+            "shipping_address",
         ]
         read_only_fields = [
             "id",
@@ -34,10 +37,17 @@ class OrderItemSerializer(serializers.ModelSerializer):
             "total_price",
             "product_name",
             "seller_name",
+            "shipping_address",
         ]
 
     def get_total_price(self, obj):
         return obj.total_price
+
+    def get_shipping_address(self, obj):
+        order = getattr(obj, "order", None)
+        if order and order.shipping_address:
+            return AddressSerializer(order.shipping_address).data
+        return None
 
 
 class PaymentSerializer(serializers.ModelSerializer):
