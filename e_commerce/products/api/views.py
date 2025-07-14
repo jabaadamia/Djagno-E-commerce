@@ -70,6 +70,18 @@ class ProductViewSet(
         # For POST, PUT, DELETE, apply IsSeller
         return [IsSeller()]
 
+    # override the list method to apply distinct filtering
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset()).distinct()
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
     @action(detail=False, methods=["get"], permission_classes=[IsSeller])
     def my_products(self, request):
         """
@@ -79,7 +91,7 @@ class ProductViewSet(
         products = Product.objects.filter(seller=request.user.seller)
 
         # Apply filtering
-        filtered_products = self.filter_queryset(products)
+        filtered_products = self.filter_queryset(products).distinct()
 
         # Apply pagination
         page = self.paginate_queryset(filtered_products)
