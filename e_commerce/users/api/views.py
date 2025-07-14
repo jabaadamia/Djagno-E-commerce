@@ -14,7 +14,7 @@ from django.db import models
 
 from e_commerce.users.models import User, Customer, Seller, Address
 from e_commerce.orders.models import OrderItem
-from e_commerce.orders.api.serializers import OrderItemSerializer
+from e_commerce.orders.api.serializers import OrderSerializer, OrderItemSerializer
 
 from .serializers import (
     UserSerializer,
@@ -89,6 +89,33 @@ class CustomerViewSet(
         customer.user.delete()  # delete associated user
         customer.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        url_path="orders",
+        permission_classes=[IsAuthenticated],
+    )
+    def my_orders(self, request):
+        """
+        endpoint to get the current cursomers's orders.
+        """
+        try:
+            customer = self.get_queryset().get(user=request.user)
+        except Customer.DoesNotExist:
+            return Response(
+                {"detail": "Customer profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        orders = customer.orders.all()
+        serializer = OrderSerializer(
+            orders,
+            many=True,
+            context={
+                "request": request,
+            },
+        )
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SellerViewSet(
