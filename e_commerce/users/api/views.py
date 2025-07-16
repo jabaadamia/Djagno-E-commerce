@@ -11,6 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied, NotFound
 
 from django.db import models
+import stripe
+from django.conf import settings
 
 from e_commerce.users.models import User, Customer, Seller, Address
 from e_commerce.orders.models import OrderItem
@@ -291,6 +293,45 @@ class SellerViewSet(
 
         serializer = OrderItemSerializer(order_item, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @action(
+        detail=False,
+        methods=["post"],
+        url_path="connect-stripe",
+        permission_classes=[IsAuthenticated],
+    )
+    def connect_stripe(self, request):
+        """
+        Endpoint to initiate Stripe Connect onboarding for the seller.
+        Returns a Stripe onboarding URL.
+        """
+        try:
+            seller = self.get_queryset().get(user=request.user)
+        except Seller.DoesNotExist:
+            return Response(
+                {"detail": "Seller profile not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        stripe.api_key = settings.STRIPE_SECRET_KEY
+
+        if not seller.stripe_account_id:
+            account = stripe.Account.create(
+                type="express",
+                email=request.user.email,
+            )
+            seller.stripe_account_id = account.id
+            seller.save()
+        else:
+            account = stripe.Account.retrieve(seller.stripe_account_id)
+
+        account_link = stripe.AccountLink.create(
+            account=account.id,
+            refresh_url=request.build_absolute_uri("/stripe/refresh/"),
+            return_url=request.build_absolute_uri("/stripe/return/"),
+            type="account_onboarding",
+        )
+        return Response({"url": account_link.url})
 
 
 class AddressViewSet(

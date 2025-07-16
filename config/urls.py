@@ -11,6 +11,7 @@ from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from e_commerce.orders.api.views import StripeWebhookView
+from django.http import HttpResponse
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -28,6 +29,22 @@ urlpatterns = [
     # ...
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    path(
+        "stripe/return/",
+        lambda request: HttpResponse(
+            "Stripe onboarding complete. You may close this window.",
+            content_type="text/plain",
+        ),
+        name="stripe-return",
+    ),
+    path(
+        "stripe/refresh/",
+        lambda request: HttpResponse(
+            "Please try connecting your Stripe account again.",
+            content_type="text/plain",
+        ),
+        name="stripe-refresh",
+    ),
 ]
 
 # API URLS
