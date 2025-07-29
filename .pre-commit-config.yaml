@@ -1,4 +1,5 @@
-exclude: '^docs/|/migrations/|devcontainer.json'
+# exclude e_commerce_frontend/ for now
+exclude: '^docs/|/migrations/|devcontainer.json|^e_commerce_frontend/'
 default_stages: [pre-commit]
 minimum_pre_commit_version: "3.2.0"
 
