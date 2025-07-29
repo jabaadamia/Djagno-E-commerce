@@ -1,0 +1,150 @@
+.seller-info {
+  border: 1px solid #ddd;
+  padding: 1.2rem 1.5rem 1.2rem 1.5rem;
+  border-radius: 12px;
+  max-width: 400px;
+  background-color: #fff;
+  box-shadow: 0 2px 12px rgba(25,118,210,0.10);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.seller-info__avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  position: relative;
+}
+
+.seller-info__image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2.5px solid var(--primary-color, #1976d2);
+  background: #f5f7fa;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+}
+
+.seller-info__file-input {
+  position: absolute;
+  left: 50%;
+  top: 70px;
+  transform: translateX(-50%);
+  opacity: 0;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  z-index: 2;
+}
+.seller-info__avatar:hover .seller-info__file-input {
+  opacity: 1;
+}
+.seller-info__avatar::after {
+  content: '\1F4F7';
+  position: absolute;
+  left: 50%;
+  top: 70px;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: var(--primary-color, #1976d2);
+  background: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 1;
+  display: none;
+}
+.seller-info__avatar:hover::after {
+  display: block;
+}
+
+.seller-info__username {
+  text-align: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--primary-color, #1976d2);
+  margin: 0.2rem 0 0.1rem 0;
+}
+
+.seller-info__shop-name {
+  font-size: 1.08rem;
+  font-weight: 500;
+  margin-bottom: 0.15rem;
+  color: #222;
+}
+
+.seller-info__phone {
+  color: #555;
+  font-size: 0.97rem;
+  margin-bottom: 0.15rem;
+}
+
+.seller-info__description {
+  color: #666;
+  font-size: 0.97rem;
+  margin-bottom: 0.2rem;
+}
+
+.seller-info__input,
+.seller-info__textarea {
+  width: 100%;
+  padding: 7px 9px;
+  margin-top: 0.18rem;
+  margin-bottom: 0.4rem;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  background: #fafbfc;
+  transition: border 0.2s;
+}
+.seller-info__input:focus,
+.seller-info__textarea:focus {
+  border: 1.5px solid var(--primary-color, #1976d2);
+  outline: none;
+}
+
+.seller-info__textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-size: 0.98rem;
+}
+
+.seller-info__edit-button,
+.seller-info__save-button {
+  padding: 0.5rem 1.2rem;
+  border: none;
+  background-color: var(--primary-color, #1976d2);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 0.3rem;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(25,118,210,0.08);
+  transition: background 0.18s, box-shadow 0.18s;
+}
+.seller-info__edit-button:hover,
+.seller-info__save-button:hover {
+  background-color: #1253a4;
+  box-shadow: 0 4px 16px rgba(25,118,210,0.13);
+}
+
+.seller-info form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: stretch;
+}
+
+.seller-info__input + .seller-info__input,
+.seller-info__input + .seller-info__textarea,
+.seller-info__textarea + .seller-info__input {
+  margin-top: 0.2rem;
+}

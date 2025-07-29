@@ -1,0 +1,290 @@
+.customer-info {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+  max-width: 500px;
+  width: 100%;
+}
+
+.customer-info__avatar {
+  position: relative;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.customer-info__image {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.customer-info__image:hover {
+  border-color: #3b82f6;
+  transform: scale(1.05);
+}
+
+.customer-info__image--editable {
+  box-shadow: 0 0 0 2px #3b82f6;
+  transition: box-shadow 0.2s, filter 0.2s;
+}
+
+.customer-info__avatar:hover .customer-info__image--editable {
+  filter: brightness(0.7);
+}
+
+.customer-info__avatar-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(59, 130, 246, 0.5);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+
+.customer-info__avatar:hover .customer-info__avatar-overlay {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.customer-info__file-input {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  cursor: pointer;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+}
+
+.customer-info__username {
+  text-align: center;
+  color: #6b7280;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.customer-info__date-of-birth,
+.customer-info__phone,
+.customer-info__email {
+  color: #64748b;
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.customer-info__edit-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.customer-info__edit-button:hover {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+}
+
+.customer-info__save-button {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.customer-info__save-button:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+}
+
+.customer-info__input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  background-color: #f9fafb;
+  margin-bottom: 1rem;
+}
+
+.customer-info__input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background-color: white;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #374151;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (max-width: 768px) {
+  .customer-info {
+    padding: 1.5rem;
+    margin: 1rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .customer-info__image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .customer-info__file-input {
+    width: 100px;
+    height: 100px;
+  }
+}
+
+.customer-addresses-card {
+  background: white;
+  padding: 1.5rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.07);
+  border: 1px solid #e2e8f0;
+  max-width: 500px;
+  width: 100%;
+  margin: 2rem auto 0 auto;
+}
+
+.address-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1rem 0;
+}
+
+.address-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 1rem;
+}
+
+.address-list-item:last-child {
+  border-bottom: none;
+}
+
+.address-text {
+  flex: 1;
+  margin-right: 0.5rem;
+  word-break: break-word;
+}
+
+.address-icon-btn {
+  background: none;
+  border: none;
+  padding: 0.25rem 0.4rem;
+  margin-left: 0.1rem;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.15s;
+  vertical-align: middle;
+  color: #64748b;
+}
+
+.address-icon-btn:hover {
+  background: #e0e7ef;
+  color: #1d4ed8;
+}
+
+.address-edit-form,
+.address-add-form {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.address-edit-form input,
+.address-add-form input {
+  width: 90px;
+  padding: 0.3rem 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  transition: border 0.2s;
+}
+
+.address-edit-form input:focus,
+.address-add-form input:focus {
+  border-color: #3b82f6;
+  background: #fff;
+}
+
+@media (max-width: 600px) {
+  .customer-addresses-card {
+    padding: 1rem;
+    margin: 1rem 0 0 0;
+  }
+  .address-edit-form input,
+  .address-add-form input {
+    width: 60px;
+    font-size: 0.85rem;
+  }
+}

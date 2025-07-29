@@ -1,0 +1,197 @@
+.product-detail {
+  padding: 1.5rem 0;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  color: var(--primary-color);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.back-link:hover {
+  color: var(--primary-hover);
+}
+
+.product-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--card-shadow);
+}
+
+.product-title {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.product-price {
+  font-size: 1.25rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.product-details {
+  background: var(--background-light);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: var(--card-shadow);
+}
+
+.detail-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.detail-value {
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  line-height: 1.5;
+  font-size: 0.95rem;
+}
+
+.categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.category-tag {
+  background-color: var(--border-color);
+  color: var(--text-secondary);
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+}
+
+.add-to-cart-button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  margin-top: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.add-to-cart-button:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.add-to-cart-button:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+.add-to-cart-button::before {
+  content: '🛒';
+  font-size: 1.1rem;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+.error {
+  color: var(--error-color);
+}
+
+.seller-product-detail-page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 32px 0 32px 0;
+}
+
+.seller-product-layout {
+  display: flex;
+  gap: 32px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.seller-product-main-card {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 4px 24px rgba(25,118,210,0.08);
+  padding: 32px 28px 24px 28px;
+  min-width: 320px;
+  max-width: 600px;
+  flex: 2 1 400px;
+  margin-bottom: 24px;
+}
+
+.seller-product-earnings-card {
+  background: #f7faff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(25,118,210,0.10);
+  padding: 28px 24px 20px 24px;
+  min-width: 220px;
+  max-width: 320px;
+  flex: 1 1 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.earnings-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color, #1976d2);
+  margin-bottom: 12px;
+}
+
+.earnings-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #388e3c;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+@media (max-width: 900px) {
+  .seller-product-layout {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .seller-product-main-card, .seller-product-earnings-card {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .product-layout {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+  }
+
+  .product-detail {
+    padding: 1rem 0;
+  }
+}
