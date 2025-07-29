@@ -1,54 +1,35 @@
-# Django E-commerce
+# Django & React E-commerce Marketplace
 
-django ecommerce api
+## Overview
 
-[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+This is full-stack **Multi-Vendor E-commerce Marketplace** built with **Django REST Framework** for the backend API and **React (Vite)** for the dynamic user interface.
 
-License: MIT
+-----
 
-## Settings
+## Features
 
-Moved to [settings](https://cookiecutter-django.readthedocs.io/en/latest/1-getting-started/settings.html).
+### Core E-commerce Functionality
 
-## Basic Commands
+   **Product Catalog:** Browse and discover products from various vendors.\
+   **Shopping Cart:** Add, remove, and manage items in your cart before checkout.\
+   **Order Management:** Track order history for both customers and vendors.
 
-### Setting Up Your Users
+### Vendor & User Management
 
-- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+   **Multi-Vendor Support:** Allows multiple vendors to register and operate on the platform.\
+   **Vendor Product Management:** Vendors can add, update, and remove their own products.
 
-- To create a **superuser account**, use this command:
+   **Secure Authentication:** Role-based authentication system using JSON Web Tokens (JWT).
 
-      $ python manage.py createsuperuser
+### Payment Processing
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+   **Stripe Integration:** payment processing via the Stripe API (configured for a sandbox environment).
 
-### Type checks
+### API & Database
 
-Running type checks with mypy:
+   **RESTful API:** A comprehensive API developed with Django REST Framework to handle all platform interactions.\
+   **PostgreSQL Database**
 
-    $ mypy e_commerce
+### Vendor Dashboard
 
-### Test coverage
-
-To run the tests, check your test coverage, and generate an HTML coverage report:
-
-    $ coverage run -m pytest
-    $ coverage html
-    $ open htmlcov/index.html
-
-#### Running tests with pytest
-
-    $ pytest
-
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/2-local-development/developing-locally.html#using-webpack-or-gulp).
-
-## Deployment
-
-The following details how to deploy this application.
-
-### Docker
-
-See detailed [cookiecutter-django Docker documentation](https://cookiecutter-django.readthedocs.io/en/latest/3-deployment/deployment-with-docker.html).
+   **Sales Dashboard:** A dedicated dashboard for vendors to view sales and orders.
