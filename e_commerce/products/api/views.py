@@ -13,7 +13,6 @@ from rest_framework.permissions import (
     BasePermission,
     AllowAny,
     IsAdminUser,
-    IsAuthenticated,
 )
 from rest_framework.exceptions import PermissionDenied
 import django_filters
@@ -170,7 +169,7 @@ class CategoryViewSet(
 
     def get_permissions(self):
         if self.request.method in ["GET", "HEAD", "OPTIONS"]:
-            permission_classes = [IsAuthenticated]
+            permission_classes = [AllowAny]
         else:
             permission_classes = [IsAdminUser]
         return [permission() for permission in permission_classes]
